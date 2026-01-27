@@ -7,7 +7,7 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
             <h4 className="mb-3">Work Experience (Optional)</h4>
             {data.experience.map((exp, index) => (
                 <Card key={index} className="mb-3 p-3 bg-light">
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={6}>
                             <Form.Control
                                 type="text"
@@ -25,7 +25,7 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                             />
                         </Col>
                     </Row>
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={6}>
                             <Form.Control
                                 type="text"
@@ -62,7 +62,7 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
             <h4 className="mt-4 mb-3">Education</h4>
             {data.education.map((edu, index) => (
                 <Card key={index} className="mb-3 p-3 bg-light">
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={6}>
                             <Form.Control
                                 type="text"
@@ -80,8 +80,8 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                             />
                         </Col>
                     </Row>
-                    <Row className="mb-2">
-                        <Col md={4}>
+                    <Row className="mb-2 g-3">
+                        <Col md={3}>
                             <Form.Control
                                 type="text"
                                 placeholder="Location"
@@ -89,7 +89,7 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                                 onChange={(e) => handleArrayChange('education', index, 'location', e.target.value)}
                             />
                         </Col>
-                        <Col md={4}>
+                        <Col md={3}>
                             <Form.Control
                                 type="text"
                                 placeholder="Year"
@@ -97,12 +97,20 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                                 onChange={(e) => handleArrayChange('education', index, 'year', e.target.value)}
                             />
                         </Col>
-                        <Col md={4}>
+                        <Col md={3}>
                             <Form.Control
                                 type="text"
                                 placeholder="Stream"
                                 value={edu.stream}
                                 onChange={(e) => handleArrayChange('education', index, 'stream', e.target.value)}
+                            />
+                        </Col>
+                        <Col md={3}>
+                            <Form.Control
+                                type="text"
+                                placeholder="Score (%/CGPA)"
+                                value={edu.score}
+                                onChange={(e) => handleArrayChange('education', index, 'score', e.target.value)}
                             />
                         </Col>
                     </Row>
@@ -111,7 +119,7 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                     </div>
                 </Card>
             ))}
-            <Button variant="outline-primary" size="sm" onClick={() => addArrayItem('education', { qualification: '', institute: '', location: '', year: '', stream: '' })}>
+            <Button variant="outline-primary" size="sm" onClick={() => addArrayItem('education', { qualification: '', institute: '', location: '', year: '', stream: '', score: '' })}>
                 + Add Education
             </Button>
         </div>

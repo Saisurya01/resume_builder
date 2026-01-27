@@ -7,7 +7,7 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
             <h4 className="mb-3">Projects</h4>
             {data.projects.map((proj, index) => (
                 <Card key={index} className="mb-3 p-3 bg-light">
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={6}>
                             <Form.Control
                                 type="text"
@@ -25,7 +25,7 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
                             />
                         </Col>
                     </Row>
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={6}>
                             <Form.Control
                                 type="text"
@@ -69,7 +69,7 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
             <h4 className="mb-3">Certifications (Optional)</h4>
             {data.certifications.map((cert, index) => (
                 <Card key={index} className="mb-2 p-2">
-                    <Row className="mb-2">
+                    <Row className="mb-2 g-3">
                         <Col md={4}>
                             <Form.Control
                                 type="text"

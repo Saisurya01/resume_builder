@@ -27,7 +27,7 @@ const SummarySkills = ({ data, handleChange, handleSkillChange }) => {
             </Form.Group>
 
             <h5 className="mb-3">Skills (Comma separated)</h5>
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={12}>
                     <Form.Group controlId="technicalSkills">
                         <Form.Label>Technical Skills</Form.Label>
@@ -41,7 +41,7 @@ const SummarySkills = ({ data, handleChange, handleSkillChange }) => {
                 </Col>
             </Row>
 
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={6}>
                     <Form.Group controlId="tools">
                         <Form.Label>Tools & Software</Form.Label>

@@ -5,7 +5,7 @@ const PersonalInfo = ({ data, handleChange }) => {
     return (
         <div>
             <h4 className="mb-3">Personal Information</h4>
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={6}>
                     <Form.Group controlId="fullName">
                         <Form.Label>Full Name</Form.Label>
@@ -32,7 +32,7 @@ const PersonalInfo = ({ data, handleChange }) => {
                 </Col>
             </Row>
 
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={6}>
                     <Form.Group controlId="phone">
                         <Form.Label>Phone</Form.Label>
@@ -58,7 +58,7 @@ const PersonalInfo = ({ data, handleChange }) => {
                 </Col>
             </Row>
 
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={6}>
                     <Form.Group controlId="state">
                         <Form.Label>State</Form.Label>
@@ -83,7 +83,7 @@ const PersonalInfo = ({ data, handleChange }) => {
                 </Col>
             </Row>
 
-            <Row className="mb-3">
+            <Row className="mb-3 g-3">
                 <Col md={6}>
                     <Form.Group controlId="linkedin">
                         <Form.Label>LinkedIn (Optional)</Form.Label>
@@ -97,12 +97,26 @@ const PersonalInfo = ({ data, handleChange }) => {
                 </Col>
                 <Col md={6}>
                     <Form.Group controlId="portfolio">
-                        <Form.Label>Portfolio/GitHub (Optional)</Form.Label>
+                        <Form.Label>Portfolio (Optional)</Form.Label>
                         <Form.Control
                             type="text"
                             name="portfolio"
                             value={data.portfolio}
                             onChange={(e) => handleChange('personalInfo', 'portfolio', e.target.value)}
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
+
+            <Row className="mb-3">
+                <Col md={6}>
+                    <Form.Group controlId="github">
+                        <Form.Label>GitHub (Optional)</Form.Label>
+                        <Form.Control
+                            type="text"
+                            name="github"
+                            value={data.github}
+                            onChange={(e) => handleChange('personalInfo', 'github', e.target.value)}
                         />
                     </Form.Group>
                 </Col>

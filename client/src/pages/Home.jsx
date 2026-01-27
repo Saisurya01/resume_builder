@@ -18,7 +18,7 @@ const Home = () => {
 
             <Row className="justify-content-center">
                 <Col md={5} className="mb-4 animate-slide-up delay-100">
-                    <Card className="h-100 border-0 shadow-lg text-center p-5 scale-hover">
+                    <Card className="h-100 border-0 shadow-lg text-center p-4 p-md-5 scale-hover">
                         <Card.Body>
                             <Card.Title as="h3" className="mb-3">New Resume</Card.Title>
                             <Card.Text className="text-muted mb-4">
@@ -31,7 +31,7 @@ const Home = () => {
                     </Card>
                 </Col>
                 <Col md={5} className="mb-4 animate-slide-up delay-200">
-                    <Card className="h-100 border-0 shadow-lg text-center p-5 scale-hover">
+                    <Card className="h-100 border-0 shadow-lg text-center p-4 p-md-5 scale-hover">
                         <Card.Body>
                             <Card.Title as="h3" className="mb-3">Optimize Existing</Card.Title>
                             <Card.Text className="text-muted mb-4">

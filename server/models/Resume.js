@@ -9,7 +9,8 @@ const ResumeSchema = new mongoose.Schema({
         state: String,
         country: String,
         linkedin: String,
-        portfolio: String
+        portfolio: String,
+        github: String
     },
     summary: String,
     skills: {
@@ -29,7 +30,8 @@ const ResumeSchema = new mongoose.Schema({
         institute: String,
         location: String,
         year: String,
-        stream: String
+        stream: String,
+        score: String
     }],
     projects: [{
         title: String,

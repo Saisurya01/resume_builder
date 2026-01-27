@@ -5,19 +5,22 @@ import PersonalInfo from '../components/form/PersonalInfo';
 import SummarySkills from '../components/form/SummarySkills';
 import ExperienceEducation from '../components/form/ExperienceEducation';
 import ProjectsOthers from '../components/form/ProjectsOthers';
+import templateProfessional from '../assets/template_professional.png';
+import templateAcademic from '../assets/template_academic.png';
+import templateModern from '../assets/template_modern.png';
 
 const CreateResume = () => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        personalInfo: { fullName: '', email: '', phone: '', city: '', state: '', country: '', linkedin: '', portfolio: '' },
+        personalInfo: { fullName: '', email: '', phone: '', city: '', state: '', country: '', linkedin: '', portfolio: '', github: '' },
         summary: '',
         skills: { technical: '', tools: '', softSkills: '' },
         experience: [],
-        education: [{ qualification: '', institute: '', location: '', year: '', stream: '' }],
+        education: [{ qualification: '', institute: '', location: '', year: '', stream: '', score: '' }],
         projects: [],
         certifications: [],
         languages: [],
-        template: 'classic'
+        template: 'professional'
     });
 
     const handleChange = (section, field, value) => {
@@ -91,54 +94,59 @@ const CreateResume = () => {
     return (
         <Container className="mt-5 mb-5">
             <h2 className="text-center mb-4">Create Your Resume</h2>
-            <ProgressBar now={(step / 4) * 100} label={`Step ${step} of 4`} className="mb-4 animate-fade-in" />
+            <ProgressBar now={(step / 5) * 100} label={`Step ${step} of 5`} className="mb-4 animate-fade-in" />
 
-            <div className="p-4 border rounded shadow-sm card animate-slide-up">
+            <div className="p-3 p-md-4 border rounded shadow-sm card animate-slide-up">
                 {step === 1 && <PersonalInfo data={formData} handleChange={handleChange} />}
                 {step === 2 && <SummarySkills data={formData} handleChange={handleChange} handleSkillChange={handleSkillChange} />}
                 {step === 3 && <ExperienceEducation data={formData} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} />}
-                {step === 4 && (
-                    <>
-                        <ProjectsOthers data={formData} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} />
-                        <hr className="my-4" />
-                        <div className="mb-3">
-                            <h4>Select Resume Template</h4>
-                            <div className="d-flex gap-3">
-                                <Form.Check
-                                    type="radio"
-                                    label="Classic (Helvetica, Left-align)"
-                                    name="template"
-                                    value="classic"
-                                    checked={formData.template === 'classic'}
-                                    onChange={(e) => handleChange('template', null, e.target.value)}
-                                />
-                                <Form.Check
-                                    type="radio"
-                                    label="Professional (Serif, Clean)"
-                                    name="template"
-                                    value="professional"
-                                    checked={formData.template === 'professional'}
-                                    onChange={(e) => handleChange('template', null, e.target.value)}
-                                />
-                                <Form.Check
-                                    type="radio"
-                                    label="Executive (Centered Headers)"
-                                    name="template"
-                                    value="executive"
-                                    checked={formData.template === 'executive'}
-                                    onChange={(e) => handleChange('template', null, e.target.value)}
-                                />
-                            </div>
+                {step === 4 && <ProjectsOthers data={formData} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} />}
+                {step === 5 && (
+                    <div className="text-center">
+                        <h4 className="mb-4 fw-bold">Choose Your Resume Style</h4>
+                        <p className="text-muted mb-4">Select a template that best fits your professional background. All templates are 100% ATS-friendly.</p>
+                        <div className="row justify-content-center g-4">
+                            {[
+                                { id: 'professional', name: 'Professional', img: templateProfessional, desc: 'Clean, minimalist, and highly readable.' },
+                                { id: 'academic', name: 'Academic', img: templateAcademic, desc: 'Structured for research and education.' },
+                                { id: 'modern', name: 'Modern', img: templateModern, desc: 'Contemporary look with bold accents.' }
+                            ].map((t) => (
+                                <div key={t.id} className="col-12 col-md-4">
+                                    <div
+                                        className={`card h-100 template-card ${formData.template === t.id ? 'selected' : ''}`}
+                                        onClick={() => handleChange('template', null, t.id)}
+                                    >
+                                        <div className="template-img-container">
+                                            <img src={t.img} alt={t.name} className="card-img-top" />
+                                            {formData.template === t.id && (
+                                                <div className="selection-overlay">
+                                                    <div className="check-icon">✓</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="card-body">
+                                            <h5 className="card-title fw-bold">{t.name}</h5>
+                                            <p className="card-text small text-muted">{t.desc}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </>
+                    </div>
                 )}
 
-                <div className="d-flex justify-content-between mt-4">
-                    <Button variant="secondary" onClick={prevStep} disabled={step === 1}>Previous</Button>
-                    {step < 4 ? (
-                        <Button variant="primary" onClick={nextStep}>Next</Button>
+                <div className="d-flex justify-content-between mt-5">
+                    <Button variant="outline-secondary" onClick={prevStep} disabled={step === 1} className="px-4">
+                        Previous
+                    </Button>
+                    {step < 5 ? (
+                        <Button variant="primary" onClick={nextStep} className="px-4">
+                            Next Step
+                        </Button>
                     ) : (
-                        <Button variant="success" onClick={handleSubmit}>Generate PDF</Button>
+                        <Button variant="success" onClick={handleSubmit} className="px-5 fw-bold">
+                            Generate ATS Resume
+                        </Button>
                     )}
                 </div>
             </div>
