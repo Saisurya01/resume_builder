@@ -3,8 +3,8 @@
 A high-performance, ATS-friendly MERN stack resume builder that allows users to create professional resumes in both PDF and DOCX formats. It also includes an AI-powered resume optimizer to analyze resumes against specific job descriptions.
 
 ## 🚀 Live Demo
+- **Frontend**: [https://resume-builder-frontend-6vmo.onrender.com](https://resume-builder-frontend-6vmo.onrender.com)
 - **Backend API**: [https://resume-builder-backend-0ith.onrender.com](https://resume-builder-backend-0ith.onrender.com)
-- **Frontend**: (Deploying soon to Vercel/Netlify)
 
 ## ✨ Features
 - **ATS-Friendly Templates**: Choose from Professional, Academic, and Modern styles.
