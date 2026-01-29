@@ -10,7 +10,8 @@ const ResumeSchema = new mongoose.Schema({
         country: String,
         linkedin: String,
         portfolio: String,
-        github: String
+        github: String,
+        youtube: String
     },
     summary: String,
     skills: {

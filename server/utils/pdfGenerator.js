@@ -1,4 +1,7 @@
 const PDFDocument = require('pdfkit');
+const { cleanText, formatUrl } = require('./cleaners');
+
+const sectionOrder = ['summary', 'skills', 'experience', 'projects', 'education', 'internships', 'certifications', 'languages'];
 
 exports.generatePDF = (data, res) => {
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
@@ -13,62 +16,31 @@ exports.generatePDF = (data, res) => {
     });
 
     try {
-        // Template Logic
         const template = data.template || 'professional';
         let fontRegular = 'Helvetica';
         let fontBold = 'Helvetica-Bold';
-        let headerAlign = 'center';
-        let sectionLineStyle = 'simple'; // simple, double, thick
-
-        // Section Order Definition
-        let sectionOrder = [
-            'summary', 'skills', 'experience', 'projects', 'education', 'internships', 'certifications', 'languages'
-        ];
+        let sectionLineStyle = 'simple';
 
         if (template === 'academic') {
             fontRegular = 'Times-Roman';
             fontBold = 'Times-Bold';
-            headerAlign = 'center';
-            sectionLineStyle = 'double';
-            // Academic: Education and Projects emphasized
-            sectionOrder = [
-                'education', 'projects', 'skills', 'experience', 'summary', 'internships', 'certifications', 'languages'
-            ];
         } else if (template === 'modern') {
-            fontRegular = 'Helvetica'; // Clean sans-serif
+            fontRegular = 'Helvetica';
             fontBold = 'Helvetica-Bold';
-            headerAlign = 'left';
             sectionLineStyle = 'thick';
-            // Modern: Summary and Projects emphasized
-            sectionOrder = [
-                'summary', 'projects', 'skills', 'experience', 'education', 'internships', 'certifications', 'languages'
-            ];
-        } else {
-            // Professional (Default)
-            // Experience before Projects
-            sectionOrder = [
-                'summary', 'skills', 'experience', 'projects', 'education', 'internships', 'certifications', 'languages'
-            ];
         }
 
-        // Helper: Section Title
         const addSectionTitle = (title) => {
             doc.moveDown(0.5);
             doc.font(fontBold).fontSize(11).text(title.toUpperCase(), { align: 'left' });
 
-            // Draw line separator based on style
-            const lineWidth = doc.page.width - 100; // margin 50 * 2
+            const lineWidth = doc.page.width - 100;
             const startX = 50;
             const y = doc.y;
 
             if (sectionLineStyle === 'thick') {
                 doc.strokeColor('black').lineWidth(2).moveTo(startX, y).lineTo(startX + lineWidth, y).stroke();
-            } else if (sectionLineStyle === 'double') {
-                doc.strokeColor('black').lineWidth(0.5).moveTo(startX, y).lineTo(startX + lineWidth, y).stroke();
-                doc.strokeColor('black').lineWidth(0.5).moveTo(startX, y + 2).lineTo(startX + lineWidth, y + 2).stroke();
-                doc.moveDown(0.1);
             } else {
-                // Simple
                 doc.strokeColor('black').lineWidth(0.5).moveTo(startX, y).lineTo(startX + lineWidth, y).stroke();
             }
 
@@ -76,12 +48,10 @@ exports.generatePDF = (data, res) => {
             doc.font(fontRegular).fontSize(10);
         };
 
-        // 1. HEADER (Always first)
-        // FULL NAME
-        doc.font(fontBold).fontSize(16).text(data.personalInfo.fullName.toUpperCase(), { align: headerAlign });
+        // 1. HEADER
+        doc.font(fontBold).fontSize(16).text(data.personalInfo.fullName.toUpperCase(), { align: 'left' });
         doc.moveDown(0.3);
 
-        // Contact Info
         doc.font(fontRegular).fontSize(10);
         const contactParts = [
             data.personalInfo.phone,
@@ -90,51 +60,39 @@ exports.generatePDF = (data, res) => {
         ].filter(Boolean);
 
         if (contactParts.length > 0) {
-            doc.text(contactParts.join(' | '), { align: headerAlign });
+            doc.text(contactParts.join(' | '), { align: 'left' });
         }
 
-        // Links
         const linkParts = [];
-        if (data.personalInfo.linkedin) linkParts.push({ label: 'LinkedIn', url: data.personalInfo.linkedin });
-        if (data.personalInfo.github) linkParts.push({ label: 'GitHub', url: data.personalInfo.github });
-        if (data.personalInfo.portfolio) linkParts.push({ label: 'Portfolio', url: data.personalInfo.portfolio });
+        if (data.personalInfo.linkedin) linkParts.push({ label: 'LinkedIn', url: formatUrl(data.personalInfo.linkedin) });
+        if (data.personalInfo.github) linkParts.push({ label: 'GitHub', url: formatUrl(data.personalInfo.github) });
+        if (data.personalInfo.portfolio) linkParts.push({ label: 'Portfolio', url: formatUrl(data.personalInfo.portfolio) });
+        if (data.personalInfo.youtube) linkParts.push({ label: 'YouTube', url: formatUrl(data.personalInfo.youtube) });
 
         if (linkParts.length > 0) {
             doc.moveDown(0.2);
-            const separator = ' | ';
-            let totalWidth = 0;
-            doc.font(fontRegular).fontSize(10);
-            linkParts.forEach((part, i) => {
-                totalWidth += doc.widthOfString(part.label);
-                if (i < linkParts.length - 1) totalWidth += doc.widthOfString(separator);
+            linkParts.forEach((p, index) => {
+                doc.fillColor('blue').text(p.label, {
+                    link: p.url,
+                    underline: true,
+                    continued: true
+                });
+                doc.fillColor('black').text(index < linkParts.length - 1 ? ' | ' : ' ', { underline: false, link: null, continued: index < linkParts.length - 1 });
             });
-
-            let startX = 50;
-            if (headerAlign === 'center') {
-                startX = (doc.page.width - 100 - totalWidth) / 2 + 50;
-            }
-
-            let currentY = doc.y;
-
-            linkParts.forEach((part, i) => {
-                doc.text(part.label, startX, currentY, { link: part.url, continue: true, underline: false });
-                startX += doc.widthOfString(part.label);
-                if (i < linkParts.length - 1) {
-                    doc.text(separator, startX, currentY, { link: null, continue: true });
-                    startX += doc.widthOfString(separator);
-                }
-            });
-            doc.text('', 50, currentY); // Reset line
+            doc.moveDown(0.5);
+        } else {
+            doc.moveDown(0.5);
         }
-        doc.moveDown(1);
 
-        // Render Sections based on Order
+        doc.fillColor('black');
+
+        // Render Sections
         sectionOrder.forEach(section => {
             switch (section) {
                 case 'summary':
                     if (data.summary) {
                         addSectionTitle('PROFESSIONAL SUMMARY');
-                        doc.text(data.summary, { align: 'justify' });
+                        doc.text(cleanText(data.summary), { align: 'left' });
                         doc.moveDown();
                     }
                     break;
@@ -163,21 +121,22 @@ exports.generatePDF = (data, res) => {
                 case 'experience':
                     if (data.experience && data.experience.length) {
                         addSectionTitle('WORK EXPERIENCE');
-                        data.experience.forEach(exp => {
-                            doc.font(fontBold).text(`${exp.title} – ${exp.company}, ${exp.location}`);
-                            doc.font(fontRegular).text(exp.dates);
+                        data.experience.forEach((exp) => {
+                            doc.font(fontBold).text(exp.title, { continued: true });
+                            doc.font(fontBold).text(` – ${exp.company}`, { continued: true });
+                            doc.font(fontRegular).text(`, ${exp.location}`, { continued: false });
+
+                            doc.font(fontRegular).text(`Duration: ${exp.dates}`, { continued: false });
                             doc.moveDown(0.2);
 
-                            if (exp.description && exp.description.length) {
-                                if (Array.isArray(exp.description)) {
-                                    exp.description.forEach(point => {
-                                        doc.text(`• ${point}`, { indent: 15, align: 'left' });
-                                    });
-                                } else {
-                                    doc.text(exp.description);
-                                }
+                            if (exp.description) {
+                                (Array.isArray(exp.description) ? exp.description : [exp.description]).forEach(point => {
+                                    if (point && point.trim()) {
+                                        doc.text(`• ${cleanText(point)}`, { indent: 15, align: 'left' });
+                                    }
+                                });
                             }
-                            doc.moveDown(0.5);
+                            doc.moveDown(0.4);
                         });
                         doc.moveDown(0.5);
                     }
@@ -186,35 +145,41 @@ exports.generatePDF = (data, res) => {
                 case 'projects':
                     if (data.projects && data.projects.length) {
                         addSectionTitle('PROJECTS');
-                        data.projects.forEach(proj => {
-                            doc.font(fontBold).text(proj.title, { continued: true });
+                        data.projects.forEach((proj) => {
+                            doc.font(fontBold).text(proj.title, { continued: false });
 
-                            const links = [];
-                            if (proj.link) links.push({ label: 'Live Demo', url: proj.link });
-                            if (proj.github) links.push({ label: 'Repo', url: proj.github });
+                            const projLinks = [];
+                            if (proj.link) projLinks.push({ label: 'Live Demo', url: formatUrl(proj.link) });
+                            if (proj.github) projLinks.push({ label: 'Repo', url: formatUrl(proj.github) });
 
-                            if (links.length > 0) {
-                                doc.font(fontRegular).text(' | ', { continued: true });
-                                links.forEach((l, i) => {
-                                    const isLast = i === links.length - 1;
-                                    doc.text(l.label, { link: l.url, continued: !isLast, underline: false });
-                                    if (!isLast) doc.text(' | ', { continued: true });
+                            if (projLinks.length > 0) {
+                                doc.fontSize(9);
+                                projLinks.forEach((l, i) => {
+                                    doc.fillColor('blue').text(l.label, { link: l.url, underline: true, continued: true });
+                                    doc.fillColor('black').text(i < projLinks.length - 1 ? ' | ' : ' ', { underline: false, link: null, continued: i < projLinks.length - 1 });
                                 });
-                            } else {
-                                doc.text('');
+                                doc.fontSize(10).fillColor('black').moveDown(0.2);
                             }
 
-                            if (proj.tools) {
-                                doc.font(fontRegular).text(`Tools Used: ${proj.tools}`);
+                            if (proj.tools && proj.tools.trim()) {
+                                doc.font(fontBold).text('Tools Used: ', { continued: true });
+                                doc.font(fontRegular).text(proj.tools.trim(), { continued: false });
+                                doc.moveDown(0.2);
                             }
 
-                            doc.moveDown(0.2);
-                            if (proj.description) doc.text(proj.description);
-                            if (proj.outcome) doc.text(`Outcome: ${proj.outcome}`);
+                            if (proj.description) {
+                                (Array.isArray(proj.description) ? proj.description : proj.description.split('\n')).forEach(point => {
+                                    if (point && point.trim()) {
+                                        doc.text(`• ${cleanText(point)}`, { indent: 15, align: 'left' });
+                                    }
+                                });
+                            }
+                            if (proj.outcome && proj.outcome.trim()) {
+                                doc.text(`Outcome: ${cleanText(proj.outcome)}`, { indent: 15 });
+                            }
 
                             doc.moveDown(0.5);
                         });
-                        doc.moveDown(0.5);
                     }
                     break;
 
@@ -222,27 +187,11 @@ exports.generatePDF = (data, res) => {
                     if (data.education && data.education.length) {
                         addSectionTitle('EDUCATION');
                         data.education.forEach(edu => {
-                            doc.font(fontBold).text(`${edu.qualification} – ${edu.stream}`);
-                            doc.font(fontRegular).text(`${edu.institute}, ${edu.location}`);
-
-                            let yearLine = `Year of Completion: ${edu.year}`;
-                            if (edu.score) yearLine += ` | Score: ${edu.score}`;
-                            doc.text(yearLine);
-
-                            doc.moveDown(0.5);
-                        });
-                        doc.moveDown(0.5);
-                    }
-                    break;
-
-                case 'internships':
-                    if (data.internships && data.internships.length) {
-                        addSectionTitle('INTERNSHIPS');
-                        data.internships.forEach(intern => {
-                            doc.font(fontBold).text(`${intern.role} – ${intern.organization}`);
-                            doc.font(fontRegular).text(intern.duration);
-                            if (intern.description) doc.text(intern.description);
-                            doc.moveDown(0.5);
+                            doc.font(fontBold).text(`${edu.qualification} – ${edu.stream}`, { continued: false });
+                            doc.font(fontBold).text(edu.institute, { continued: true });
+                            doc.font(fontRegular).text(`, ${edu.location}`, { continued: false });
+                            doc.font(fontRegular).text(`Completion Year: ${edu.year}${edu.score ? ` | Score: ${edu.score}` : ''}`);
+                            doc.moveDown(0.4);
                         });
                         doc.moveDown(0.5);
                     }
@@ -252,13 +201,19 @@ exports.generatePDF = (data, res) => {
                     if (data.certifications && data.certifications.length) {
                         addSectionTitle('CERTIFICATIONS');
                         data.certifications.forEach(cert => {
-                            doc.font(fontBold).text(`${cert.name} – ${cert.organization}, ${cert.year}`, { continued: !!cert.link });
+                            doc.font(fontBold).text(cert.name, { continued: true });
+                            doc.font(fontBold).text(` – ${cert.organization}`, { continued: true });
+
+                            if (cert.year) {
+                                doc.font(fontRegular).text(`, ${cert.year}`, { continued: cert.link ? true : false });
+                            }
 
                             if (cert.link) {
-                                doc.font(fontRegular).text(' | ', { continued: true });
-                                doc.text('Certificate Link', { link: cert.link, underline: false });
+                                doc.fillColor('black').font(fontRegular).text(' | ', { continued: true });
+                                doc.fillColor('blue').text('Certificate Link', { link: formatUrl(cert.link), underline: true });
+                                doc.fillColor('black').moveDown(0.3);
                             } else {
-                                doc.text('');
+                                doc.moveDown(0.3);
                             }
                         });
                         doc.moveDown(0.5);
@@ -278,8 +233,8 @@ exports.generatePDF = (data, res) => {
 
     } catch (pdfError) {
         console.error('Error building PDF content:', pdfError);
-        doc.text('Error generating full resume content.');
     }
 
     doc.end();
 };
+

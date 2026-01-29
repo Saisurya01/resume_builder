@@ -55,7 +55,12 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                     </div>
                 </Card>
             ))}
-            <Button variant="outline-primary" size="sm" onClick={() => addArrayItem('experience', { title: '', company: '', location: '', dates: '', description: [] })}>
+            <Button
+                variant="outline-primary"
+                size="sm"
+                className="w-100 w-md-auto"
+                onClick={() => addArrayItem('experience', { title: '', company: '', location: '', dates: '', description: [] })}
+            >
                 + Add Experience
             </Button>
 
@@ -119,7 +124,12 @@ const ExperienceEducation = ({ data, handleArrayChange, addArrayItem, removeArra
                     </div>
                 </Card>
             ))}
-            <Button variant="outline-primary" size="sm" onClick={() => addArrayItem('education', { qualification: '', institute: '', location: '', year: '', stream: '', score: '' })}>
+            <Button
+                variant="outline-primary"
+                size="sm"
+                className="w-100 w-md-auto"
+                onClick={() => addArrayItem('education', { qualification: '', institute: '', location: '', year: '', stream: '', score: '' })}
+            >
                 + Add Education
             </Button>
         </div>

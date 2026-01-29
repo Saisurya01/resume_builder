@@ -12,7 +12,7 @@ import templateModern from '../assets/template_modern.png';
 const CreateResume = () => {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
-        personalInfo: { fullName: '', email: '', phone: '', city: '', state: '', country: '', linkedin: '', portfolio: '', github: '' },
+        personalInfo: { fullName: '', email: '', phone: '', city: '', state: '', country: '', linkedin: '', portfolio: '', github: '', youtube: '' },
         summary: '',
         skills: { technical: '', tools: '', softSkills: '' },
         experience: [],
@@ -56,19 +56,19 @@ const CreateResume = () => {
         setFormData({ ...formData, [section]: newArray });
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (format = 'pdf') => {
         try {
             // Prepare data for API (Convert skill strings to arrays)
             const payload = {
                 ...formData,
                 skills: {
-                    technical: formData.skills.technical.split(',').map(s => s.trim()).filter(Boolean),
-                    tools: formData.skills.tools.split(',').map(s => s.trim()).filter(Boolean),
-                    softSkills: formData.skills.softSkills.split(',').map(s => s.trim()).filter(Boolean)
+                    technical: String(formData.skills.technical || '').split(',').map(s => s.trim()).filter(Boolean),
+                    tools: String(formData.skills.tools || '').split(',').map(s => s.trim()).filter(Boolean),
+                    softSkills: String(formData.skills.softSkills || '').split(',').map(s => s.trim()).filter(Boolean)
                 }
             };
 
-            const response = await axios.post('http://localhost:5000/api/resume/generate', payload, {
+            const response = await axios.post(`http://localhost:5000/api/resume/generate?format=${format}`, payload, {
                 responseType: 'blob'
             });
 
@@ -76,15 +76,15 @@ const CreateResume = () => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'resume.pdf');
+            link.setAttribute('download', `resume.${format === 'docx' ? 'docx' : 'pdf'}`);
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);
 
-            alert('Resume generated successfully!');
+            alert(`${format.toUpperCase()} generated successfully!`);
         } catch (error) {
-            console.error('Error generating resume:', error);
-            alert('Failed to generate resume.');
+            console.error(`Error generating ${format}:`, error);
+            alert(`Failed to generate ${format}.`);
         }
     };
 
@@ -135,18 +135,40 @@ const CreateResume = () => {
                     </div>
                 )}
 
-                <div className="d-flex justify-content-between mt-5">
-                    <Button variant="outline-secondary" onClick={prevStep} disabled={step === 1} className="px-4">
+                <div className="d-grid gap-3 d-md-flex justify-content-md-between mt-4 mt-md-5">
+                    <Button
+                        variant="outline-secondary"
+                        onClick={prevStep}
+                        disabled={step === 1}
+                        className="px-4 order-2 order-md-1"
+                    >
                         Previous
                     </Button>
                     {step < 5 ? (
-                        <Button variant="primary" onClick={nextStep} className="px-4">
+                        <Button
+                            variant="primary"
+                            onClick={nextStep}
+                            className="px-4 order-1 order-md-2"
+                        >
                             Next Step
                         </Button>
                     ) : (
-                        <Button variant="success" onClick={handleSubmit} className="px-5 fw-bold">
-                            Generate ATS Resume
-                        </Button>
+                        <div className="d-flex flex-column flex-md-row gap-2 order-1 order-md-2">
+                            <Button
+                                variant="primary"
+                                onClick={() => handleSubmit('docx')}
+                                className="px-md-4 fw-bold"
+                            >
+                                Download DOCX
+                            </Button>
+                            <Button
+                                variant="success"
+                                onClick={() => handleSubmit('pdf')}
+                                className="px-md-4 fw-bold"
+                            >
+                                Generate ATS PDF
+                            </Button>
+                        </div>
                     )}
                 </div>
             </div>

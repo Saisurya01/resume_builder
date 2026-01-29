@@ -62,7 +62,12 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
                     </div>
                 </Card>
             ))}
-            <Button variant="outline-primary" size="sm" className="mb-4" onClick={() => addArrayItem('projects', { title: '', tools: '', github: '', link: '', description: '', outcome: '' })}>
+            <Button
+                variant="outline-primary"
+                size="sm"
+                className="mb-4 w-100 w-md-auto"
+                onClick={() => addArrayItem('projects', { title: '', tools: '', github: '', link: '', description: '', outcome: '' })}
+            >
                 + Add Project
             </Button>
 
@@ -110,14 +115,19 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
                     </Row>
                 </Card>
             ))}
-            <Button variant="outline-primary" size="sm" className="mb-4" onClick={() => addArrayItem('certifications', { name: '', organization: '', year: '', link: '' })}>
+            <Button
+                variant="outline-primary"
+                size="sm"
+                className="mb-4 w-100 w-md-auto"
+                onClick={() => addArrayItem('certifications', { name: '', organization: '', year: '', link: '' })}
+            >
                 + Add Certification
             </Button>
 
             <h4 className="mb-3">Languages</h4>
             {data.languages.map((lang, index) => (
-                <Row key={index} className="mb-2">
-                    <Col md={6}>
+                <Row key={index} className="mb-2 g-2">
+                    <Col xs={6} md={6}>
                         <Form.Control
                             type="text"
                             placeholder="Language"
@@ -125,7 +135,7 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
                             onChange={(e) => handleArrayChange('languages', index, 'language', e.target.value)}
                         />
                     </Col>
-                    <Col md={5}>
+                    <Col xs={4} md={5}>
                         <Form.Control
                             as="select"
                             value={lang.proficiency}
@@ -138,12 +148,17 @@ const ProjectsOthers = ({ data, handleArrayChange, addArrayItem, removeArrayItem
                             <option value="Native">Native</option>
                         </Form.Control>
                     </Col>
-                    <Col md={1}>
-                        <Button variant="danger" size="sm" onClick={() => removeArrayItem('languages', index)}>X</Button>
+                    <Col xs={2} md={1}>
+                        <Button variant="danger" size="sm" className="w-100" onClick={() => removeArrayItem('languages', index)}>X</Button>
                     </Col>
                 </Row>
             ))}
-            <Button variant="outline-primary" size="sm" onClick={() => addArrayItem('languages', { language: '', proficiency: '' })}>
+            <Button
+                variant="outline-primary"
+                size="sm"
+                className="w-100 w-md-auto"
+                onClick={() => addArrayItem('languages', { language: '', proficiency: '' })}
+            >
                 + Add Language
             </Button>
         </div>

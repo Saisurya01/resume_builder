@@ -1,0 +1,77 @@
+{
+    "personalInfo": {
+        "fullName": "Sai Surya Kosuri",
+        "email": "sai@example.com",
+        "phone": "+91 9876543210",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "country": "India",
+        "linkedin": "https://linkedin.com/in/saisurya",
+        "github": "github.com/saisurya",
+        "portfolio": "www.saisurya.dev"
+    },
+    "template": "professional",
+    "summary": "Senior Full-Stack Engineer with 5+ years of experience. I specialize in building scalable web applications. My LinkedIn is mentioned above.",
+    "skills": {
+        "technical": [
+            "React",
+            "Node.js",
+            "Express",
+            "MongoDB"
+        ],
+        "tools": [
+            "Docker",
+            "Kubernetes",
+            "Git"
+        ]
+    },
+    "experience": [
+        {
+            "title": "Senior Engineer",
+            "company": "Tech Corp",
+            "location": "Remote",
+            "dates": "Jan 2022 - Present",
+            "description": [
+                "Led team of 5",
+                "Built resume builder."
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "title": "AI Resume Builder",
+            "link": "https://resumebuilder.com",
+            "github": "https://github.com/user/repo",
+            "tools": "React, Node, PDFKit, DOCX",
+            "description": "A powerful tool to generate resumes."
+        }
+    ],
+    "education": [
+        {
+            "qualification": "B.Tech",
+            "stream": "Computer Science",
+            "institute": "University of Technology",
+            "location": "India",
+            "year": "2020",
+            "score": "9.0 CGPA"
+        }
+    ],
+    "certifications": [
+        {
+            "name": "AWS Certified Solutions Architect",
+            "organization": "Amazon Web Services",
+            "year": "2023",
+            "link": "https://aws.amazon.com/verify/123"
+        }
+    ],
+    "languages": [
+        {
+            "language": "English",
+            "proficiency": "Fluent"
+        },
+        {
+            "language": "Telugu",
+            "proficiency": "Native"
+        }
+    ]
+}

@@ -21,7 +21,12 @@ const SummarySkills = ({ data, handleChange, handleSkillChange }) => {
                     value={data.summary}
                     onChange={(e) => handleChange('summary', null, e.target.value)}
                 />
-                <Button variant="outline-secondary" size="sm" className="mt-2" onClick={generateSummary}>
+                <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    className="mt-2 w-100 w-md-auto"
+                    onClick={generateSummary}
+                >
                     Auto-Generate Summary
                 </Button>
             </Form.Group>
