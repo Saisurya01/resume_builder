@@ -68,7 +68,7 @@ const CreateResume = () => {
                 }
             };
 
-            const response = await axios.post(`http://localhost:5000/api/resume/generate?format=${format}`, payload, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/resume/generate?format=${format}`, payload, {
                 responseType: 'blob'
             });
 

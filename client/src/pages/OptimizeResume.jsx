@@ -27,7 +27,7 @@ const OptimizeResume = () => {
             const formData = new FormData();
             formData.append('resume', file);
 
-            const uploadRes = await axios.post('http://localhost:5000/api/resume/upload', formData, {
+            const uploadRes = await axios.post(`${process.env.REACT_APP_API_URL}/api/resume/upload`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
@@ -35,7 +35,7 @@ const OptimizeResume = () => {
             setResumeText(text);
 
             // Step 2: Optimize/Analyze
-            const optimizeRes = await axios.post('http://localhost:5000/api/resume/optimize', {
+            const optimizeRes = await axios.post(`${process.env.REACT_APP_API_URL}/api/resume/optimize`, {
                 currentResumeText: text,
                 jobDescription: jobDescription
             });
