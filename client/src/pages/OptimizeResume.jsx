@@ -15,6 +15,7 @@ const OptimizeResume = () => {
     const [categorizedKeywords, setCategorizedKeywords] = useState(null);
     const [selectedSkills, setSelectedSkills] = useState({});
     const [atsScore, setAtsScore] = useState(0);
+    const [atsScoreAfter, setAtsScoreAfter] = useState(null);
     const [optimizedResumeData, setOptimizedResumeData] = useState(null);
     const [applyingSkills, setApplyingSkills] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -97,53 +98,36 @@ const OptimizeResume = () => {
     const totalSelected = Object.values(selectedSkills)
         .reduce((sum, skills) => sum + skills.length, 0);
 
-    // Apply selected skills to resume
+    // Apply selected skills to resume (user-approved only; server parses resume and merges)
     const handleApplySkills = async () => {
         if (totalSelected === 0) {
-            alert('Please select at least one skill to add.');
+            alert('Please select at least one skill you actually have to add.');
             return;
         }
 
         setApplyingSkills(true);
         setSuccessMessage('');
+        setAtsScoreAfter(null);
 
         try {
-            console.log('✨ Applying selected skills...');
-
-            // Create resume data structure from extracted text
-            // For now, we'll create a minimal structure
-            const resumeData = {
-                personalInfo: { fullName: '', email: '', phone: '' },
-                summary: '',
-                skills: {
-                    technical: '',
-                    tools: '',
-                    softSkills: ''
-                },
-                experience: [],
-                education: [],
-                projects: [],
-                certifications: [],
-                languages: []
-            };
+            console.log('✨ Making ATS-optimized resume...');
 
             const response = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/resume/apply-optimizations`,
                 {
-                    resumeData,
-                    selectedSkills
+                    resumeText,
+                    selectedSkills,
+                    jobDescription: jobDescription || undefined
                 }
             );
 
-            console.log('✅ Skills applied successfully');
+            console.log('✅ ATS-optimized resume ready');
 
             setOptimizedResumeData(response.data.updatedResumeData);
             setSuccessMessage(response.data.message);
-
-            // Update ATS score (estimate)
-            const newScore = Math.min(100, atsScore + (totalSelected * 2));
-            setAtsScore(newScore);
-
+            if (response.data.atsScoreAfter != null) {
+                setAtsScoreAfter(response.data.atsScoreAfter);
+            }
         } catch (error) {
             console.error('❌ Error applying skills:', error);
             const errorMessage = error.response?.data?.error || 'Failed to apply skills. Please try again.';
@@ -260,7 +244,7 @@ const OptimizeResume = () => {
                 <Card className="mt-4 p-4 shadow-sm border-success">
                     <h3 className="text-success mb-3">Missing Keywords by Category</h3>
                     <p className="text-muted mb-4">
-                        Select the skills you want to add to your resume. All selections will be added to the appropriate sections.
+                        Select <strong>only the skills you actually have</strong>. Unchecked skills will not be added. Your approval is required — we never auto-inject skills.
                     </p>
 
                     {Object.entries(categorizedKeywords).map(([category, keywords]) => {
@@ -297,10 +281,10 @@ const OptimizeResume = () => {
                         </Alert>
                     )}
 
-                    {/* Apply Button */}
+                    {/* CTA: Make ATS-Optimized Resume */}
                     <div className="d-grid gap-2 mt-4">
                         <Button
-                            variant="primary"
+                            variant="success"
                             size="lg"
                             onClick={handleApplySkills}
                             disabled={totalSelected === 0 || applyingSkills}
@@ -308,10 +292,10 @@ const OptimizeResume = () => {
                             {applyingSkills ? (
                                 <>
                                     <Spinner animation="border" size="sm" className="me-2" />
-                                    Applying Skills...
+                                    Creating ATS-Optimized Resume...
                                 </>
                             ) : (
-                                `Add Selected Skills to Resume (${totalSelected})`
+                                `MAKE ATS-OPTIMIZED RESUME ${totalSelected > 0 ? `(${totalSelected} selected)` : ''}`
                             )}
                         </Button>
                     </div>
@@ -325,9 +309,19 @@ const OptimizeResume = () => {
                         <strong>✅ {successMessage}</strong>
                     </Alert>
 
-                    <h5 className="mb-3">Download Your Optimized Resume</h5>
+                    {atsScoreAfter != null && (
+                        <div className="mb-3 d-flex align-items-center gap-3 flex-wrap">
+                            <span className="text-muted">ATS score:</span>
+                            <Badge bg="secondary">{atsScore}%</Badge>
+                            <span>→</span>
+                            <Badge bg={getScoreVariant(atsScoreAfter)}>{atsScoreAfter}%</Badge>
+                            {atsScoreAfter > atsScore && <span className="text-success small">Improved</span>}
+                        </div>
+                    )}
+
+                    <h5 className="mb-3">Download Your ATS-Optimized Resume</h5>
                     <p className="text-muted mb-3">
-                        Your resume has been optimized with the selected skills. Download it in your preferred format.
+                        Single-column, ATS-friendly format. No tables or graphics. Download PDF or DOCX.
                     </p>
 
                     <Row className="g-3">
