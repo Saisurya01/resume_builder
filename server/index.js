@@ -11,9 +11,9 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
     origin: [
         'https://resume-builder-frontend-6vmo.onrender.com',
-        process.env.FRONTEND_URL,
         'http://localhost:5173',
-        'http://localhost:3000'
+        'http://localhost:3000',
+        process.env.FRONTEND_URL
     ].filter(Boolean),
     optionsSuccessStatus: 200
 };
@@ -22,12 +22,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Database Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => {
-        console.log('MongoDB Connection Failed (Running in offline mode):', err.codeName || 'ECONNREFUSED');
-        // Suppress full stack trace for cleaner dev experience unless needed
-    });
+const connectDB = async () => {
+    try {
+        if (!process.env.MONGO_URI) {
+            console.log('No MONGO_URI found in .env (Running in offline mode)');
+            return;
+        }
+        await mongoose.connect(process.env.MONGO_URI);
+        console.log('✅ MongoDB Connected Successfully');
+    } catch (err) {
+        console.log('⚠️ MongoDB Connection Failed (Running in offline mode):', err.message || 'ECONNREFUSED');
+    }
+};
+
+connectDB();
 
 // Routes
 app.use('/api/resume', require('./routes/resumeRoutes'));
