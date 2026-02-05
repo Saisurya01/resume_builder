@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Card, Alert, Spinner, ProgressBar, Badge, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
 const OptimizeResume = () => {
@@ -38,7 +38,7 @@ const OptimizeResume = () => {
             const formData = new FormData();
             formData.append('resume', file);
 
-            const uploadRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/resume/upload`, formData);
+            const uploadRes = await api.post(`/api/resume/upload`, formData);
             console.log('✅ Resume uploaded successfully');
 
             const text = uploadRes.data.text;
@@ -46,7 +46,7 @@ const OptimizeResume = () => {
 
             // Step 2: Optimize/Analyze
             console.log('🎯 Analyzing resume against job description...');
-            const optimizeRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/resume/optimize`, {
+            const optimizeRes = await api.post(`/api/resume/optimize`, {
                 currentResumeText: text,
                 jobDescription: jobDescription
             });
@@ -112,8 +112,8 @@ const OptimizeResume = () => {
         try {
             console.log('✨ Making ATS-optimized resume...');
 
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/resume/apply-optimizations`,
+const response = await api.post(
+                `/api/resume/apply-optimizations`,
                 {
                     resumeText,
                     selectedSkills,
@@ -147,8 +147,8 @@ const OptimizeResume = () => {
         try {
             console.log(`📥 Downloading optimized resume as ${format.toUpperCase()}...`);
 
-            const response = await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/resume/generate?format=${format}`,
+const response = await api.post(
+                `/api/resume/generate?format=${format}`,
                 optimizedResumeData,
                 { responseType: 'blob' }
             );

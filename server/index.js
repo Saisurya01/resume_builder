@@ -7,15 +7,15 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware - Enhanced CORS for production
+// Middleware - Enhanced CORS for production (allow all origins for debugging)
 const corsOptions = {
-    origin: [
-        'https://resume-builder-frontend-6vmo.onrender.com',
-        'http://localhost:5173',
-        'http://localhost:5174',
-        'http://localhost:3000',
-        process.env.FRONTEND_URL
-    ].filter(Boolean),
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Allow all origins for now - you can restrict this later
+        return callback(null, true);
+    },
     credentials: true,
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

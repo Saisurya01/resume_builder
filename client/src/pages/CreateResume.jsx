@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Button, ProgressBar, Form } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../utils/api';
 import PersonalInfo from '../components/form/PersonalInfo';
 import SummarySkills from '../components/form/SummarySkills';
 import ExperienceEducation from '../components/form/ExperienceEducation';
@@ -84,7 +84,7 @@ const CreateResume = () => {
 
             console.log('Sending payload:', payload);
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/resume/generate?format=${format}`, payload, {
+            const response = await api.post(`/api/resume/generate?format=${format}`, payload, {
                 responseType: 'blob'
             });
 
