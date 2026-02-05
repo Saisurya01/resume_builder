@@ -26,7 +26,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        cors(corsOptions)(req, res, next);
+    } else {
+        next();
+    }
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
