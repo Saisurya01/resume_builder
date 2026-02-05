@@ -5,10 +5,20 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 
-// Simple CORS - allow everything for now
-app.use(cors());
+// Middleware
+const corsOptions = {
+    origin: [
+        'https://resume-builder-frontend-6vmo.onrender.com',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:3000',
+        process.env.FRONTEND_URL
+    ].filter(Boolean),
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,13 +45,6 @@ app.get('/', (req, res) => {
     res.send('Resume Builder API is running');
 });
 
-// Error handling
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Access at: http://localhost:${PORT}`);
 });
