@@ -7,7 +7,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware - Enhanced CORS for production
 const corsOptions = {
     origin: [
         'https://resume-builder-frontend-6vmo.onrender.com',
@@ -16,9 +16,17 @@ const corsOptions = {
         'http://localhost:3000',
         process.env.FRONTEND_URL
     ].filter(Boolean),
-    optionsSuccessStatus: 200
+    credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

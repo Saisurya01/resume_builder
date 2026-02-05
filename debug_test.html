@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Debug Test</title>
+</head>
+<body>
+    <h1>Testing Frontend Connection</h1>
+    <button onclick="testConnection()">Test API Connection</button>
+    <div id="result"></div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+
+            try {
+                // Test 1: Basic health check
+                console.log('Testing health endpoint...');
+                const healthResponse = await fetch('https://resume-builder-backend-0ith.onrender.com/');
+                const healthData = await healthResponse.text();
+                console.log('Health check:', healthData);
+
+                // Test 2: Resume generation
+                console.log('Testing resume generation...');
+                const resumeData = {
+                    personalInfo: {
+                        fullName: 'Test User',
+                        email: 'test@example.com',
+                        phone: '123-456-7890'
+                    },
+                    summary: 'Test resume',
+                    template: 'professional'
+                };
+
+                const resumeResponse = await fetch('https://resume-builder-backend-0ith.onrender.com/api/resume/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resumeData)
+                });
+
+                console.log('Resume response status:', resumeResponse.status);
+                console.log('Resume response headers:', [...resumeResponse.headers.entries()]);
+
+                if (resumeResponse.ok) {
+                    const blob = await resumeResponse.blob();
+                    console.log('Resume blob size:', blob.size);
+                    resultDiv.innerHTML = `<p style="color: green;">✅ Connection successful! Generated ${blob.size} bytes</p>`;
+                } else {
+                    const errorText = await resumeResponse.text();
+                    resultDiv.innerHTML = `<p style="color: red;">❌ Resume generation failed: ${resumeResponse.status} - ${errorText}</p>`;
+                }
+
+            } catch (error) {
+                console.error('Test error:', error);
+                resultDiv.innerHTML = `<p style="color: red;">❌ Network Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
