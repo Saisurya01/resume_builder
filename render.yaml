@@ -27,7 +27,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
-        value: https://resume-builder-backend-0ith.onrender.com
+        value: https://resume-builder-backend-bzqs.onrender.com
     routes:
       - type: rewrite
         source: /*
