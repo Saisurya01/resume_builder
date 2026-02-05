@@ -58,6 +58,20 @@ const CreateResume = () => {
 
     const handleSubmit = async (format = 'pdf') => {
         try {
+            // Validate required fields
+            if (!formData.personalInfo.fullName.trim()) {
+                alert('Please enter your full name.');
+                return;
+            }
+            if (!formData.personalInfo.email.trim()) {
+                alert('Please enter your email address.');
+                return;
+            }
+            if (!formData.personalInfo.phone.trim()) {
+                alert('Please enter your phone number.');
+                return;
+            }
+
             // Prepare data for API (Convert skill strings to arrays)
             const payload = {
                 ...formData,
@@ -67,6 +81,8 @@ const CreateResume = () => {
                     softSkills: String(formData.skills.softSkills || '').split(',').map(s => s.trim()).filter(Boolean)
                 }
             };
+
+            console.log('Sending payload:', payload);
 
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/resume/generate?format=${format}`, payload, {
                 responseType: 'blob'
@@ -84,7 +100,16 @@ const CreateResume = () => {
             alert(`${format.toUpperCase()} generated successfully!`);
         } catch (error) {
             console.error(`Error generating ${format}:`, error);
-            alert(`Failed to generate ${format}.`);
+            
+            let errorMessage = `Failed to generate ${format}.`;
+            if (error.response) {
+                console.error('Error response:', error.response.data);
+                errorMessage = `Server error: ${error.response.status}. Please check your data and try again.`;
+            } else if (error.request) {
+                errorMessage = `Network error: Could not connect to the server. Please check your connection.`;
+            }
+            
+            alert(errorMessage);
         }
     };
 
@@ -154,6 +179,16 @@ const CreateResume = () => {
                         </Button>
                     ) : (
                         <div className="d-flex flex-column flex-md-row gap-2 order-1 order-md-2">
+                            <Button
+                                variant="outline-info"
+                                onClick={() => {
+                                    console.log('Current form data:', JSON.stringify(formData, null, 2));
+                                    alert('Form data logged to console. Press F12 to view.');
+                                }}
+                                className="px-md-4"
+                            >
+                                Debug Form Data
+                            </Button>
                             <Button
                                 variant="primary"
                                 onClick={() => handleSubmit('docx')}

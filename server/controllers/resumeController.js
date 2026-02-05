@@ -23,7 +23,10 @@ exports.createResume = async (req, res) => {
             console.log('[Controller] Validation successful.');
         } catch (validationError) {
             console.error('[Controller] Validation FAILED:', validationError.message);
-            return res.status(400).json({ error: validationError.message });
+            return res.status(400).json({ 
+                error: validationError.message,
+                details: 'Please check your resume data and ensure all required fields are filled correctly.'
+            });
         }
 
         // 2. Generate Document
@@ -38,7 +41,10 @@ exports.createResume = async (req, res) => {
     } catch (err) {
         console.error('Error in createResume:', err);
         if (!res.headersSent) {
-            res.status(500).send('Server Error');
+            res.status(500).json({ 
+                error: 'Internal server error occurred while generating resume',
+                details: err.message 
+            });
         }
     }
 };
